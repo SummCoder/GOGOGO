@@ -104,5 +104,66 @@ for ; i > 0; i-- {
 }
 ```
 
+### 数据结构：数组&切片
+
+- 数组：内存中连续存储、固定长度的同类型数据
+- 切片：数组中的某一段引用？
+- 左闭右开语法糖
+- append方法会生成一个新的切片
+- `slice`的数据结构`reflect.SliceHeader`
+```go
+type SliceHeader struct {
+	Data 	uintptr	// 切片指向的开始地址
+	Len		int		// 切片的长度
+	Cap		int 	// 切片存储容量>=Len
+}
+```
+
+
+```go
+func exampleArrayAndSlice() {
+	var arr [5]int
+	for i :=0; i < len(arr); i++ {
+		arr[i] = i
+	}
+
+	// 切片左闭右开
+	var slice1 []int = arr[2:5]
+	// 等同于slice1 := arr[2:5]?
+	for i := 0; i < len(slice1); i++ {
+		fmt.Printf("part1[%v] = %v\n", i, slice1[i])
+	}
+
+	slice2 := append(slice1, 6)
+	slice2[0] = 0
+	arr[2] = 100
+	for i := 0; i < len(slice2); i++ {
+		fmt.Printf("part1[%v] = %v\n", i, slice2[i])
+	}
+	for i := 0; i < len(slice1); i++ {
+		fmt.Printf("part1[%v] = %v\n", i, slice1[i])
+	}
+}
+```
+
+结果：
+```text
+part1[0] = 2
+part1[1] = 3
+part1[2] = 4
+part1[0] = 0
+part1[1] = 3
+part1[2] = 4
+part1[3] = 6
+part1[0] = 100
+part1[1] = 3
+part1[2] = 4
+```
+
+由上述结果能得出什么结论？
+- 切片是对数组的引用，故而改变原数组也会改变切片
+- slice2为何不受影响？使用append函数对切片进行扩展时，如果切片的容量不足以容纳新元素，Go语言会创建一个新的数组，并将原始数组的内容复制到新数组中，然后在新数组中添加新元素。
+- 多维数组？`var arr [5][6]int`
+
 
 
